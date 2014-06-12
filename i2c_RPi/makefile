@@ -2,7 +2,7 @@
 # RPi testi2c makefile
 #
 
-ARM_CROSS	= arm-linux-gnueabi-
+ARM_CROSS	= arm-linux-gnueabihf-
 
 GC			= $(ARM_CROSS)g++
 CC			= $(ARM_CROSS)gcc
