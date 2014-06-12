@@ -1,9 +1,9 @@
 /*
- * PulseDebug.h
+ * RC_to_i2c_Debug.h
  */
  
-#ifndef PULSE_DEBUG_H
-#define PULSE_DEBUG_H
+#ifndef RC_TO_I2C_DEBUG_H
+#define RC_TO_I2C_DEBUG_H
 
 // Uncomment for Debug Output
 //#define DEBUG_SER
@@ -20,5 +20,5 @@
 
 #endif // DEBUG_SER
 
-#endif // PULSE_DEBUG_H
+#endif // RC_TO_I2C_DEBUG_H
 

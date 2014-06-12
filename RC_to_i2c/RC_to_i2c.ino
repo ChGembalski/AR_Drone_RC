@@ -1,13 +1,18 @@
-// PulseRead Timer
-
+/*
+ * RC_to_i2c
+ */
+ 
 /*
  * INCLUDE
  */
-#include "PulseDebug.h"
-#include "PulseReadTimer.h"
+#include "RC_to_i2c_Debug.h"
+#include "RC_to_i2c.h"
 #include <Arduino.h>
 #include <Wire.h>
 
+/*
+ * GLOBAL
+ */
 uint8_t  PIN_MASK;
 uint8_t  PIN_BIT_THRO;
 uint8_t  PIN_BIT_AILE;
@@ -50,14 +55,13 @@ void setup()
   Setup_Channel();
   Clear_Values();
   Clear_Counter();
-  //Setup_Timer();
   #ifdef DEBUG_SER
-  LOOP_SHOW = 0;
+    LOOP_SHOW = 0;
   #endif //DEBUG_SER
   Setup_i2c();
   
   #ifdef DEBUG_SER
-  Serial.begin(115200);
+    Serial.begin(115200);
   #endif // DEBUG_SER
   
   DBG("Setup done.");
@@ -72,38 +76,35 @@ void loop()
   
   #ifdef DEBUG_SER
   
-  LOOP_SHOW++;
-  
-  if (LOOP_SHOW > 1000)
-  {
-    LOOP_SHOW = 0;
+    LOOP_SHOW++;
     
-    DBG("THRO = ");
-    DBG(VAL_THRO);
-    DBG("  AILE = ");
-    DBG(VAL_AILE);
-    DBG("  ELEV = ");
-    DBG(VAL_ELEV);
-    DBG("  RUDD = ");
-    DBG(VAL_RUDD);
-    
-    DBG("  GEAR = ");
-    DBG(VAL_GEAR);
-    DBG("  AUX1 = ");
-    DBG(VAL_AUX1);
-    DBG("  AUX2 = ");
-    DBG(VAL_AUX2);
-    DBG("  AUX3 = ");
-    DBG(VAL_AUX3);
-    
-    DBGLN("");
-  }
+    if (LOOP_SHOW > 1000)
+    {
+      LOOP_SHOW = 0;
+      
+      DBG("THRO = ");
+      DBG(VAL_THRO);
+      DBG("  AILE = ");
+      DBG(VAL_AILE);
+      DBG("  ELEV = ");
+      DBG(VAL_ELEV);
+      DBG("  RUDD = ");
+      DBG(VAL_RUDD);
+      
+      DBG("  GEAR = ");
+      DBG(VAL_GEAR);
+      DBG("  AUX1 = ");
+      DBG(VAL_AUX1);
+      DBG("  AUX2 = ");
+      DBG(VAL_AUX2);
+      DBG("  AUX3 = ");
+      DBG(VAL_AUX3);
+      
+      DBGLN("");
+    }
   
   #endif // DEBUG_SER
 }
-
-
-
 
 /*
  * Setup Channel
@@ -135,6 +136,7 @@ void Setup_Channel()
     PIN_BIT_RUDD = digitalPinToBitMask(PIN_RUDD);
     PIN_MASK |= PIN_BIT_RUDD;
   }
+  
   // 6 Channel
   if (CHANNEL_COUNT >= 6)
   {
@@ -146,6 +148,7 @@ void Setup_Channel()
     PIN_BIT_AUX1 = digitalPinToBitMask(PIN_AUX1);
     PIN_MASK |= PIN_BIT_AUX1;
   }
+  
   // 8 Channel reserved
   if (CHANNEL_COUNT == 8)
   {
@@ -175,12 +178,14 @@ void Clear_Values()
     VAL_ELEV = 0;
     VAL_RUDD = 0;
   }
+  
   // 6 Channel
   if (CHANNEL_COUNT >= 6)
   {
     VAL_GEAR = 0;
     VAL_AUX1 = 0;
   }
+  
   // 8 Channel reserved
   if (CHANNEL_COUNT == 8)
   {
@@ -202,12 +207,14 @@ void Clear_Counter()
     VAL_ELEV_CNT = 0;
     VAL_RUDD_CNT = 0;
   }
+  
   // 6 Channel
   if (CHANNEL_COUNT >= 6)
   {
     VAL_GEAR_CNT = 0;
     VAL_AUX1_CNT = 0;
   }
+  
   // 8 Channel reserved
   if (CHANNEL_COUNT == 8)
   {
@@ -243,6 +250,7 @@ inline void Read_Channel()
   {
     VAL_RUDD_CNT++;
   }
+  
   // 6 Channel
   if (CHANNEL_COUNT >= 6)
   {
@@ -255,6 +263,7 @@ inline void Read_Channel()
       VAL_AUX1_CNT++;
     }
   }
+  
   // 8 Channel
   if (CHANNEL_COUNT == 8)
   {
@@ -291,6 +300,7 @@ inline void Read_Channel()
     VAL_RUDD = VAL_RUDD_CNT;
     VAL_RUDD_CNT = 0;
   }
+  
   // 6 Channel
   if (CHANNEL_COUNT >= 6)
   {
@@ -305,6 +315,7 @@ inline void Read_Channel()
       VAL_AUX1_CNT = 0;
     }
   }
+  
   // 8 Channel
   if (CHANNEL_COUNT == 8)
   {
@@ -321,41 +332,6 @@ inline void Read_Channel()
   }
   
   PIN_STATE_PREV = PIN_STATE_CUR;
-    
-}
-
-/*
- * Timer
- */
-void Setup_Timer()
-{
-  cli();
-
-  TCCR1A = 0;          // normal operation
-  TCCR1B = _BV(WGM12) | _BV(CS10);   // CTC, no prescaling
-  OCR1A =  10;       // compare A register value (1000 * clock speed)
-  TIMSK1 = _BV (OCIE1A);             // interrupt on Compare A Match
-
-
-
-
-/*
-  // set up timer 1
-  TCCR1B &= 0b11111000 | 1;
-  // enable overflow interrupt
-  TIMSK1 |= 0b00000001;
-*/
-
-  sei();
-  
-}
-
-/*
- * ISR TIMER 1 COMPA
- */
-ISR( TIMER1_COMPA_vect ) // TIMER1_OVF_vect
-{
-  Read_Channel();
 }
 
 /*
@@ -386,6 +362,5 @@ void i2c_Request()
   
   // Return all Values via i2c
   Wire.write(VAL_DATA, 8);
-  
 }
 

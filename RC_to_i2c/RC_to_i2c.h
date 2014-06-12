@@ -1,12 +1,12 @@
 /*
- * PulseReadTimer.h
+ * RC_to_i2c.h
  */
  
-#ifndef PULSE_READ_TIMER_H
-#define PULSE_READ_TIMER_H
+#ifndef RC_TO_I2C_H
+#define RC_TO_I2C_H
 
 
-// Pins Configuration
+// Pins Configuration (4,6,8)
 #define CHANNEL_COUNT  6
 
 // Pins 4 Channel
@@ -28,11 +28,10 @@
 // PROTO
 void Setup_Channel();
 inline void Read_Channel();
-void Setup_Timer();
 void Clear_Values();
 void Clear_Counter();
 void Setup_i2c();
 void i2c_Request();
 
-#endif // PULSE_READ_TIMER_H
+#endif // RC_TO_I2C_H
 
