@@ -1,19 +1,75 @@
-CC = gcc
+#
+# RPi testi2c makefile
+#
 
-CFLAGS = -c -Wall -O3
+ARM_CROSS	= arm-linux-gnueabi-
 
-LDFLAGS = 
+GC			= $(ARM_CROSS)g++
+CC			= $(ARM_CROSS)gcc
 
-SOURCES=$(shell find ./ -name *.c)
+########################################
+# Flags
+########################################
+ASMFLAGS	= -S -Wall -O3 
+CFLAGS		= -c -Wall -O3 
+LDFLAGS		= 
 
-OBJECTS=$(SOURCES:%.c=%.o)
+########################################
+# Path
+########################################
+LIB_PATH		= /home/q/DEV/RaspberryPI/RPiLinux/lib
+INC_PATH		= /home/q/DEV/RaspberryPI/RPiLinux/usr/include
 
-EXECUTABLE=testi2c
+########################################
+# Includes
+########################################
+CCINCLUDE		= -I $(INC_PATH)
+LDINCLUDE		= -I $(LIB_PATH)
 
-all: $(SOURCES) $(EXECUTABLE)
+########################################
+# Source Files
+########################################
+SRC			= $(shell find ./ -name *.c)
 
-$(EXECUTABLE): $(OBJECTS)
-	$(CC) $(LDFLAGS) $(OBJECTS) -o $@
+OBJ_C		= $(SRC:%.c=%.o)
 
+ASM_C		= $(SRC:%.c=%.s)
+
+EXEC		= i2c_RPi
+
+########################################
+# All
+########################################
+all: clean $(SRC) $(EXEC)
+	echo Done building $(EXEC)
+
+########################################
+# Asm
+########################################
+asm: $(ASM_C)
+	echo Done building asm
+	
+########################################
+# Clear
+########################################
+clean:
+	rm -f *.o $(ASM_C) $(EXEC) 
+	
+########################################
+# Exec
+########################################
+$(EXEC): $(OBJ_C) 
+	$(CC) $(LDFLAGS) $(LDINCLUDE) $(OBJ_C) -o $@
+
+########################################
+# .c -> .o
+########################################
 .c.o:
-	$(CC) $(CFLAGS) $< -o $@
+	$(CC) $(CFLAGS) $(CCINCLUDE) $< -o $@
+
+########################################
+# .c -> .s
+########################################
+.c.s:
+	$(CC) $(ASMFLAGS) $(CCINCLUDE) $< -o $@
+
